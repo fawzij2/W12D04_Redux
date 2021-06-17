@@ -3,7 +3,7 @@ const initialState ={
     token:'',
 };
 
-const setToken = (token) =>{
+export const setToken = (token) =>{
     return{
         type :'SET_TOKEN',
         payload : token,
@@ -13,6 +13,8 @@ const setToken = (token) =>{
 const token = (state = initialState, {type, payload})=>{
     switch (type){
         case 'SET_TOKEN':
-        return {token:[...payload]}
+        return {token:payload}
     }
 }
+
+export default token;
