@@ -1,14 +1,27 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { DashboardContext } from './../context/dashboard';
 import { LoginContext } from './../context/login';
+import { setArticles } from '../reducer/article';
+import {useDispatch, useSelector} from "react-redux";
+import axios from 'axios';
+
 
 const Dashboard = () => {
 	const dashboardContext = useContext(DashboardContext);
 	const loginContext = useContext(LoginContext);
+	const dispatch = useDispatch();
+	const [show, setShow] = useState(false);
 
-	const handleClick = () => {
-		dashboardContext.getAllArticles();
-		dashboardContext.setShow(!dashboardContext.show);
+	const state = useSelector((state) => {
+		return {
+			articles: state.articles.article
+		}
+	})
+
+	const handleClick = async () => {
+		console.log("hello there")
+		await getAllArticles();
+		setShow(!show);
 	};
 
 	const handleUpdateClick = (article) => {
@@ -20,20 +33,30 @@ const Dashboard = () => {
 	};
 
 	useEffect(() => {
-		dashboardContext.getAllArticles();
+		getAllArticles();
 	}, []);
+
+	async function getAllArticles() {
+		try {
+			const res = await axios.get('http://localhost:5000/articles');
+			console.log(res.data);
+			dispatch(setArticles(res.data));
+		} catch (error) {
+			console.log(error);
+		}
+	}
 
 	return (
 		<>
 			<br />
 			<button onClick={handleClick}>Get All Articles</button>
-			{dashboardContext.show &&
-				dashboardContext.articles.map((article) => (
+			{show &&
+				state.articles.map((article) => (
 					<div key={article._id}>
 						<div>Title: {article.title}</div>
 						<div>Description: {article.description}</div>
-						<div>author: {article.author.firstName}</div>
-						{article.author._id === loginContext.userId && (
+						{/* <div>author: {article.author.firstName}</div> */}
+						{article.author && (
 							<>
 								<button
 									onClick={() => dashboardContext.deleteArticle(article._id)}
@@ -41,7 +64,7 @@ const Dashboard = () => {
 									X
 								</button>
 								{dashboardContext.updateBox &&
-									dashboardContext.articleId === article._id && (
+									article._id && (
 										<form>
 											<input
 												type="text"

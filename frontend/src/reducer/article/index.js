@@ -7,19 +7,19 @@ const initialState = {
 const articles = (state = initialState, {type, payload})=>{
     switch(type){
         case 'SET_ARTICLES':
-            return {articles:[...payload]};
+            return {article:[...payload]};
 
         case 'ADD_ARTICLE':
-            return {articles:[...state.article, payload]};
+            return {article:[...state.article, payload]};
 
         case 'UPDATE_ARTICLE':
-            return {articles:state.article.map((elem,i)=>{
+            return {article:state.article.map((elem,i)=>{
                 if (elem.id === payload.id) return payload;
                 return elem
             })};
 
         case 'DELETE_ARTICLE':
-            return {articles:state.article.filter((elem,i)=>{
+            return {article:state.article.filter((elem,i)=>{
                 return elem.id !== payload.id; 
             })};
 
