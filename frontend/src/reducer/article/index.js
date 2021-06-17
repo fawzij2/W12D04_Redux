@@ -22,6 +22,9 @@ const articles = (state = initialState, {type, payload})=>{
             return {articles:state.article.filter((elem,i)=>{
                 return elem.id !== payload.id; 
             })};
+
+        default:
+            return state
     };
 };
 
@@ -29,28 +32,28 @@ export default articles
 
 export const setArticles = (articles)=>{
     return{
-        type: SET_ARTICLES,
+        type: 'SET_ARTICLES',
         payload: articles
     };
 };
 
 export const addArticle = (newArticle)=>{
     return{
-        type: ADD_ARTICLE,
+        type: 'ADD_ARTICLE',
         payload: newArticle,
     };
 };
 
 export const updateArticle = (articleUpdate)=>{
     return {
-        type: UPDATE_ARTICLE,
+        type: 'UPDATE_ARTICLE',
         payload: articleUpdate,
     };
 };
 
 export const deleteArticle = (deletedArticle)=>{
     return {
-        type: DELETE_ARTICLE,
+        type: 'DELETE_ARTICLE',
         payload: deletedArticle,
     };
 };
