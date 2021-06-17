@@ -20,7 +20,7 @@ const articles = (state = initialState, {type, payload})=>{
 
         case 'DELETE_ARTICLE':
             return {article:state.article.filter((elem,i)=>{
-                return elem.id !== payload.id; 
+                return elem.id !== payload; 
             })};
 
         default:

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { DashboardContext } from './../context/dashboard';
 import { LoginContext } from './../context/login';
-import { addArticle, setArticles } from '../reducer/article';
+import { setArticles, updateArticle, deleteArticle } from '../reducer/article';
 import {useDispatch, useSelector} from "react-redux";
 import axios from 'axios';
 
@@ -13,6 +13,7 @@ const Dashboard = () => {
 	const [show, setShow] = useState(false);
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
+	const [updateBox, setUpdateBox] = useState(false);
 
 	const state = useSelector((state) => {
 		return {
@@ -27,7 +28,8 @@ const Dashboard = () => {
 	};
 
 	const handleUpdateClick = (article) => {
-		if (dashboardContext.updateBox) updateArticle(article._id);
+		setUpdateBox(!updateBox)
+		if (updateBox) updateArticleById(article._id);
 	};
 
 	useEffect(() => {
@@ -44,22 +46,24 @@ const Dashboard = () => {
 		}
 	}
 
-	async function updateArticle(id) {
+	async function updateArticleById(id) {
 		try {
 			const res = await axios.put(`http://localhost:5000/articles/${id}`, {
 				title,
 				description,
 			});
-			dispatch(addArticle(res.data))
+			console.log('updated: ', res)
+			dispatch(updateArticle(res.data))
 			getAllArticles();
 		} catch (error) {
 			console.log(error);
 		}
 	}
 
-	async function deleteArticle(id) {
+	async function deleteArticleById(id) {
 		try {
 			const res = await axios.delete(`http://localhost:5000/articles/${id}`);
+			dispatch(deleteArticle(id))
 			getAllArticles();
 		} catch (error) {
 			console.log(error);
@@ -79,12 +83,12 @@ const Dashboard = () => {
 						
 							<>
 								<button
-									onClick={() => deleteArticle(article._id)}
+									onClick={() => deleteArticleById(article._id)}
 								>
 									X
 								</button>
-								{dashboardContext.updateBox &&
-									article._id && (
+								{updateBox &&
+									(
 										<form>
 											<input
 												type="text"
