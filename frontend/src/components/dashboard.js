@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { DashboardContext } from './../context/dashboard';
 import { LoginContext } from './../context/login';
-import { setArticles } from '../reducer/article';
+import { addArticle, setArticles } from '../reducer/article';
 import {useDispatch, useSelector} from "react-redux";
 import axios from 'axios';
 
@@ -11,6 +11,8 @@ const Dashboard = () => {
 	const loginContext = useContext(LoginContext);
 	const dispatch = useDispatch();
 	const [show, setShow] = useState(false);
+	const [title, setTitle] = useState('');
+	const [description, setDescription] = useState('');
 
 	const state = useSelector((state) => {
 		return {
@@ -25,11 +27,7 @@ const Dashboard = () => {
 	};
 
 	const handleUpdateClick = (article) => {
-		dashboardContext.setUpdateBox(!dashboardContext.updateBox);
-		dashboardContext.setArticleId(article._id);
-		dashboardContext.setTitle(article.title);
-		dashboardContext.setDescription(article.description);
-		if (dashboardContext.updateBox) dashboardContext.updateArticle(article._id);
+		if (dashboardContext.updateBox) updateArticle(article._id);
 	};
 
 	useEffect(() => {
@@ -46,6 +44,28 @@ const Dashboard = () => {
 		}
 	}
 
+	async function updateArticle(id) {
+		try {
+			const res = await axios.put(`http://localhost:5000/articles/${id}`, {
+				title,
+				description,
+			});
+			dispatch(addArticle(res.data))
+			getAllArticles();
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	async function deleteArticle(id) {
+		try {
+			const res = await axios.delete(`http://localhost:5000/articles/${id}`);
+			getAllArticles();
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
 	return (
 		<>
 			<br />
@@ -56,10 +76,10 @@ const Dashboard = () => {
 						<div>Title: {article.title}</div>
 						<div>Description: {article.description}</div>
 						{/* <div>author: {article.author.firstName}</div> */}
-						{article.author && (
+						
 							<>
 								<button
-									onClick={() => dashboardContext.deleteArticle(article._id)}
+									onClick={() => deleteArticle(article._id)}
 								>
 									X
 								</button>
@@ -71,14 +91,14 @@ const Dashboard = () => {
 												defaultValue={article.title}
 												placeholder="article title here"
 												onChange={(e) =>
-													dashboardContext.setTitle(e.target.value)
+													setTitle(e.target.value)
 												}
 											/>
 											<textarea
 												placeholder="article description here"
 												defaultValue={article.description}
 												onChange={(e) =>
-													dashboardContext.setDescription(e.target.value)
+													setDescription(e.target.value)
 												}
 											></textarea>
 										</form>
@@ -87,7 +107,7 @@ const Dashboard = () => {
 									Update
 								</button>
 							</>
-						)}
+						
 						<hr />
 					</div>
 				))}
