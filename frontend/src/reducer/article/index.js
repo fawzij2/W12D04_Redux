@@ -14,13 +14,13 @@ const articles = (state = initialState, {type, payload})=>{
 
         case 'UPDATE_ARTICLE':
             return {article:state.article.map((elem,i)=>{
-                if (elem.id === payload.id) return payload;
+                if (elem._id === payload._id) {return payload};
                 return elem
             })};
 
         case 'DELETE_ARTICLE':
             return {article:state.article.filter((elem,i)=>{
-                return elem.id !== payload; 
+                return elem._id !== payload; 
             })};
 
         default:

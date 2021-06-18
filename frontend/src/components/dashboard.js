@@ -48,14 +48,15 @@ const Dashboard = () => {
 
 	async function updateArticleById(id) {
 		try {
-			const res = await axios.put(`http://localhost:5000/articles/${id}`, {
+			axios.put(`http://localhost:5000/articles/${id}`, {
 				title,
 				description,
-			});
+			}).then((res)=>{
 			console.log('updated: ', res)
 			dispatch(updateArticle(res.data))
-			getAllArticles();
-		} catch (error) {
+			// getAllArticles();
+		}).catch((err)=>{console.log(err.response)})
+	 }catch (error) {
 			console.log(error);
 		}
 	}
@@ -64,7 +65,7 @@ const Dashboard = () => {
 		try {
 			const res = await axios.delete(`http://localhost:5000/articles/${id}`);
 			dispatch(deleteArticle(id))
-			getAllArticles();
+			// getAllArticles();
 		} catch (error) {
 			console.log(error);
 		}
